@@ -64,16 +64,11 @@ local gui = function(pos, node, clicker, itemstack, pointed_thing)
 	)
 end
 
--- Register Fish Trap Node
-minetest.register_node("mcl_fish_traps:fishing_trap", {
+-- Register Fish Trap Nodes
+trap = {
 	description = S("Fishing Trap"),
 	_tt_help = S("Used to automatically fish."),
 	_doc_items_longdesc = S("Used to automatically fish when placed in water."),
-	tiles = {
-		"mob_spawner.png", "mob_spawner.png",
-		"mob_spawner.png", "mob_spawner.png",
-		"mob_spawner.png", "mob_spawner.png"
-	},
 	use_texture_alpha = "clip",
 	is_ground_content = false,
 	paramtype2 = "facedir",
@@ -111,51 +106,16 @@ minetest.register_node("mcl_fish_traps:fishing_trap", {
 	end,
 	after_dig_node = drop_content,
 	on_blast = on_blast,
-})
-
--- Register Waterlogged Fish Trap Nodes
-local trap_w = {
-	description = S("Fishing Trap"),
-	_tt_help = S("Used to automatically fish."),
-	_doc_items_longdesc = S("Used to automatically fish when placed in water."),
-	use_texture_alpha = "clip",
-	is_ground_content = false,
-	paramtype2 = "facedir",
-	drawtype = "allfaces_optional",
-	groups = { axey = 1, punchy = 2, container = 2, not_in_creative_inventory = 1 },
-	_mcl_blast_resistance = 2.5,
-	_mcl_hardness = 2.5,
-	on_place = function(itemstack, placer, pointed_thing)
-		minetest.rotate_and_place(itemstack, placer, pointed_thing, minetest.is_creative_enabled(placer:get_player_name()), {}, false)
-		return itemstack
-	end,
-	on_rightclick = gui,
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		inv:set_size("main", 9*3)
-	end,
-	after_place_node = function(pos, placer, itemstack, pointed_thing)
-		minetest.get_meta(pos):set_string("name", itemstack:get_meta():get_string("name"))
-	end,
-	allow_metadata_inventory_move = protection_check_move,
-	allow_metadata_inventory_take = protection_check_put_take,
-	allow_metadata_inventory_put = protection_check_put_take,
-	on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-		minetest.log("action", player:get_player_name()..
-			" moves stuff in fishing trap at "..minetest.pos_to_string(pos))
-	end,
-	on_metadata_inventory_put = function(pos, listname, index, stack, player)
-		minetest.log("action", player:get_player_name()..
-			" moves stuff to fishing trap at "..minetest.pos_to_string(pos))
-	end,
-	on_metadata_inventory_take = function(pos, listname, index, stack, player)
-		minetest.log("action", player:get_player_name()..
-			" takes stuff from fishing trap at "..minetest.pos_to_string(pos))
-	end,
 	drop = "mcl_fish_traps:fishing_trap",
-	on_blast = on_blast,
-	after_dig_node = drop_content
+}
+
+local trap_w = table.copy(trap)
+local trap_rw = table.copy(trap)
+
+trap.tiles = {
+	"mob_spawner.png", "mob_spawner.png",
+	"mob_spawner.png", "mob_spawner.png",
+	"mob_spawner.png", "mob_spawner.png"
 }
 
 water_tex = "default_water_source_animated.png^[verticalframe:16:0"
@@ -165,7 +125,6 @@ trap_w.tiles = {
 	"("..water_tex..")^mob_spawner.png",
 }
 
-local trap_rw = table.copy(trap_w)
 water_tex_river = "default_river_water_source_animated.png^[verticalframe:16:0"
 trap_rw.tiles = {
 	"("..water_tex_river..")^mob_spawner.png",
@@ -173,6 +132,7 @@ trap_rw.tiles = {
 	"("..water_tex_river..")^mob_spawner.png",
 }
 
+minetest.register_node("mcl_fish_traps:fishing_trap", trap)
 minetest.register_node("mcl_fish_traps:fishing_trap_water", trap_w)
 minetest.register_node("mcl_fish_traps:fishing_trap_river_water", trap_rw)
 
@@ -222,7 +182,7 @@ minetest.register_abm({
 	nodenames = {"mcl_fish_traps:fishing_trap_water", "mcl_fish_traps:fishing_trap_river_water"},
 	neighbors = {"group:water"},
 	interval = 30,
-	chance = 5,
+	chance = 1,
 	action = function(pos,value)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
