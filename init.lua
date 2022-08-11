@@ -113,24 +113,26 @@ local trap_w = table.copy(trap)
 local trap_rw = table.copy(trap)
 
 trap.tiles = {
-	"mob_spawner.png", "mob_spawner.png",
-	"mob_spawner.png", "mob_spawner.png",
-	"mob_spawner.png", "mob_spawner.png"
+	"mcl_fish_traps_trap.png", "mcl_fish_traps_trap.png",
+	"mcl_fish_traps_trap.png", "mcl_fish_traps_trap.png",
+	"mcl_fish_traps_trap.png", "mcl_fish_traps_trap.png"
 }
 
 water_tex = "default_water_source_animated.png^[verticalframe:16:0"
 trap_w.tiles = {
-	"("..water_tex..")^mob_spawner.png",
-	"("..water_tex..")^mob_spawner.png",
-	"("..water_tex..")^mob_spawner.png",
+	"("..water_tex..")^mcl_fish_traps_trap.png",
+	"("..water_tex..")^mcl_fish_traps_trap.png",
+	"("..water_tex..")^mcl_fish_traps_trap.png",
 }
+trap_w.groups = { axey = 1, punchy = 2, container = 2, not_in_creative_inventory = 1 }
 
 water_tex_river = "default_river_water_source_animated.png^[verticalframe:16:0"
 trap_rw.tiles = {
-	"("..water_tex_river..")^mob_spawner.png",
-	"("..water_tex_river..")^mob_spawner.png",
-	"("..water_tex_river..")^mob_spawner.png",
+	"("..water_tex_river..")^mcl_fish_traps_trap.png",
+	"("..water_tex_river..")^mcl_fish_traps_trap.png",
+	"("..water_tex_river..")^mcl_fish_traps_trap.png",
 }
+trap_rw.groups = { axey = 1, punchy = 2, container = 2, not_in_creative_inventory = 1 }
 
 minetest.register_node("mcl_fish_traps:fishing_trap", trap)
 minetest.register_node("mcl_fish_traps:fishing_trap_water", trap_w)
@@ -159,7 +161,7 @@ minetest.register_abm({
 	nodenames = {"mcl_fish_traps:fishing_trap"},
 	neighbors = {"group:water"},
 	interval = 5,
-	chance = 5,
+	chance = 1,
 	action = function(pos,value)
 		for _,v in pairs(adjacents) do
 			local n = minetest.get_node(vector.add(pos,v)).name
@@ -178,9 +180,8 @@ minetest.register_abm({
 
 -- Register Fishing ABM
 minetest.register_abm({
-	label = "Waterlog fish trap",
+	label = "Run fish trap",
 	nodenames = {"mcl_fish_traps:fishing_trap_water", "mcl_fish_traps:fishing_trap_river_water"},
-	neighbors = {"group:water"},
 	interval = 30,
 	chance = 1,
 	action = function(pos,value)
