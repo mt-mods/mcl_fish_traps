@@ -124,19 +124,10 @@ trap_w.tiles = {
 	"("..water_tex..")^mcl_fish_traps_trap.png",
 	"("..water_tex..")^mcl_fish_traps_trap.png",
 }
-trap_w.groups = { axey = 1, punchy = 2, container = 2, not_in_creative_inventory = 1 }
-
-water_tex_river = "default_river_water_source_animated.png^[verticalframe:16:0"
-trap_rw.tiles = {
-	"("..water_tex_river..")^mcl_fish_traps_trap.png",
-	"("..water_tex_river..")^mcl_fish_traps_trap.png",
-	"("..water_tex_river..")^mcl_fish_traps_trap.png",
-}
-trap_rw.groups = { axey = 1, punchy = 2, container = 2, not_in_creative_inventory = 1 }
+trap_w.groups.not_in_creative_inventory = 1
 
 minetest.register_node("mcl_fish_traps:fishing_trap", trap)
 minetest.register_node("mcl_fish_traps:fishing_trap_water", trap_w)
-minetest.register_node("mcl_fish_traps:fishing_trap_river_water", trap_rw)
 
 -- Register Fish Trap Crafting Recipe
 minetest.register_craft({
@@ -166,13 +157,8 @@ minetest.register_abm({
 		for _,v in pairs(adjacents) do
 			local n = minetest.get_node(vector.add(pos,v)).name
 			if minetest.get_item_group(n,"water") > 0 then
-				if n:find("river") then
-					minetest.swap_node(pos,{name="mcl_fish_traps:fishing_trap_river_water"})
-					return
-				else
-					minetest.swap_node(pos,{name="mcl_fish_traps:fishing_trap_water"})
-					return
-				end
+				minetest.swap_node(pos,{name="mcl_fish_traps:fishing_trap_water"})
+				return
 			end
 		end
 	end
@@ -181,7 +167,7 @@ minetest.register_abm({
 -- Register Fishing ABM
 minetest.register_abm({
 	label = "Run fish trap",
-	nodenames = {"mcl_fish_traps:fishing_trap_water", "mcl_fish_traps:fishing_trap_river_water"},
+	nodenames = {"mcl_fish_traps:fishing_trap_water"},
 	interval = 30,
 	chance = 1,
 	action = function(pos,value)
