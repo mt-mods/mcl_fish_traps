@@ -7,11 +7,38 @@ local C = minetest.colorize
 local F = minetest.formspec_escape
 
 -- Inventory Init
-local drop_content = mcl_util.drop_items_from_meta_container("main")
+-- Code from mcl_util
+local function drop_item_stack(pos, stack)
+	if not stack or stack:is_empty() then return end
+	local drop_offset = vector.new(math.random() - 0.5, 0, math.random() - 0.5)
+	minetest.add_item(vector.add(pos, drop_offset), stack)
+end
+
+local function drop_inventory(listname)
+	return function(pos, oldnode, oldmetadata)
+		if oldmetadata and oldmetadata.inventory then
+			-- process in after_dig_node callback
+			local main = oldmetadata.inventory.main
+			if not main then return end
+			for _, stack in pairs(main) do
+				drop_item_stack(pos, stack)
+			end
+		else
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			for i = 1, inv:get_size("main") do
+				drop_item_stack(pos, inv:get_stack("main", i))
+			end
+			meta:from_table()
+		end
+	end
+end
+
+local drop_stack = drop_inventory("main")
 
 local function on_blast(pos)
 	local node = minetest.get_node(pos)
-	drop_content(pos, node)
+	drop_stack()
 	minetest.remove_node(pos)
 end
 
@@ -104,7 +131,7 @@ trap = {
 		minetest.log("action", player:get_player_name()..
 			" takes stuff from fishing trap at "..minetest.pos_to_string(pos))
 	end,
-	after_dig_node = drop_content,
+	after_dig_node = drop_stack,
 	on_blast = on_blast,
 	drop = "mcl_fish_traps:fishing_trap",
 }
