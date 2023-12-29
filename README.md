@@ -5,4 +5,4 @@ Adds fishing traps to MineClone 2. Just place in the water, and it will automati
 This mod is relatively incompatible with older versions of MineClone2. It is absolutely incompatible with MineClone5.
 
 ## Suggestions
-Have a suggestion or a bug? Create an issue on the [bug tracker](https://codeberg.org/PrairieWind/mcl_fish_traps/issues).
+Have a suggestion or a bug? Create an issue on the [bug tracker](https://github.com/mt-mods/mcl_fish_traps/issues).
