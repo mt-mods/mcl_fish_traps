@@ -145,7 +145,12 @@ trap.tiles = {
 	"mcl_fish_traps_trap.png", "mcl_fish_traps_trap.png"
 }
 
-water_tex = "default_water_source_animated.png^[verticalframe:16:0"
+local water_tex = "default_water_source_animated.png^[verticalframe:16:0"
+
+if type(minetest.get_game_info) == "function" and minetest.get_game_info().id=="mineclone2" then
+	water_tex = "mcl_core_water_source_animation.png^[verticalframe:16:0"
+end
+
 trap_w.tiles = {
 	"("..water_tex..")^mcl_fish_traps_trap.png",
 	"("..water_tex..")^mcl_fish_traps_trap.png",
