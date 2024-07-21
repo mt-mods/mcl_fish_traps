@@ -1,4 +1,4 @@
-# Fishing Traps for Mineclonia
+# Fishing Traps for MCL2/A
 Kinda a rewrite, kinda an improvement, kinda what I needed.  
 Adapted to be less op and easier on servers, I hope.  
 Prone to more changes as I figure stuff out.  
