@@ -1,8 +1,13 @@
-# Fishing Traps for MineClone 2
+# Fishing Traps for Mineclonia
+Kinda a rewrite, kinda an improvement, kinda what I needed.  
+Adapted to be less op and easier on servers, I hope.  
+Prone to more changes as I figure stuff out.  
+  
+Don't bug mt-mods for issues with this fork.  
+
+Original mod and desc:  
+https://github.com/mt-mods/mcl_fish_traps  
 Adds fishing traps to MineClone 2. Just place in the water, and it will automatically and slowly fish for you. Has the same loot table as the fishing rod. The trap must be surrounded horizontally by (river) water source blocks.
 
 ## Compatibility
-This mod is relatively incompatible with older versions of MineClone2. It is absolutely incompatible with MineClone5.
-
-## Suggestions
-Have a suggestion or a bug? Create an issue on the [bug tracker](https://github.com/mt-mods/mcl_fish_traps/issues).
+Both MCL2 and MCLA should work, not extensively tested.  
