@@ -10,8 +10,11 @@ elseif minetest.get_game_info().id == "mineclonia" then
 else
   game_id = "UNSUPPORTED"
 end
-minetest.log("action", "[MCL Fish Traps]: Initialized on game [" .. game_id .. "]")
-if game_id == "UNSUPPORTED" then return end --comment to try your luck, or debug.
+minetest.log("action", "[MCL Fish Traps]: Initializing on game [" .. game_id .. "]")
+if game_id == "UNSUPPORTED" then
+  return --comment to try your luck, or debug.
+  minetest.log("warning", "[MCL Fish Traps]: Running on an unknown game, expect dragons.")
+end
 
 local S = minetest.get_translator(minetest.get_current_modname())
 local C = minetest.colorize
