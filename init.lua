@@ -153,6 +153,7 @@ trap = {
 local trap_w = table.copy(trap)
 --local trap_rw = table.copy(trap)
 
+-- Textures
 trap.tiles = {
   "mcl_fish_traps_trap.png", "mcl_fish_traps_trap.png",
   "mcl_fish_traps_trap.png", "mcl_fish_traps_trap.png",
@@ -178,9 +179,10 @@ minetest.register_node("mcl_fish_traps:fishing_trap_water", trap_w)
 minetest.register_craft({
   output = "mcl_fish_traps:fishing_trap",
   -- Recipe might be changed sooner or later, I know it's kinda awkward.
+  -- Let's try to require at least some time fishing?
   recipe = {
       { "mcl_panes:bar_flat", "mcl_mobitems:slimeball", "mcl_panes:bar_flat" },
-      { "mcl_fishing:fishing_rod", "mcl_core:cobweb", "mcl_potions:fermented_spider_eye" },
+      { "mcl_fishing:fishing_rod", "mcl_core:cobweb", "mcl_mobitems:nautilus_shell" },
       { "mcl_panes:bar_flat", "mcl_nether:nether_wart_item", "mcl_panes:bar_flat" },
   }
 })
@@ -197,7 +199,7 @@ minetest.register_abm({
   label = "Waterlog fish trap",
   nodenames = {"mcl_fish_traps:fishing_trap"},
   neighbors = {"group:water"},
-  interval = 5,
+  interval = 6,
   chance = 1,
   action = function(pos,value)
     for _,v in pairs(adjacents) do
@@ -209,6 +211,7 @@ minetest.register_abm({
     end
   end
 })
+
 -- Store loots, unfortunately updating mcl2 loots will be tedious atm.
 local loot_table = {}
 if game_id == "mineclone2" then
@@ -257,9 +260,10 @@ elseif game_id == "mineclonia" then
   loot_table.junk = mcl_fishing.loot_junk
   loot_table.treasure = mcl_fishing.loot_treasure
 else
-  loot_table = {}
+  loot_table = {} --placeholder
 end
 
+math.randomseed(os.time())
 -- Register Fishing ABM
 minetest.register_abm({
   label = "Run fish trap",
@@ -278,10 +282,8 @@ minetest.register_abm({
     -- I suppose there's a cleaner solution but for now it works.
     -- Also we can't use enchanting (yet?) to boost loot quality,
     --  but this is a ever-running machine wich is already a boost.
-    --local pr = PseudoRandom(os.time())
-    --math.randomseed(os.time())
-    --local r = math.random(1, 1000)
-    local r = pr:next(1, 1000)
+    local r = math.random(1, 1000)
+    --local r = pr:next(1, 1000)
     --local r = pr:next(1, 100)
     if r > 980 then
       -- Treasure
@@ -313,9 +315,12 @@ minetest.register_abm({
     end
     if inv:room_for_item("main", item) then
       inv:add_item("main", item)
-    --uncomment the following block if you want fishes to drop when full
-    --else
-    --minetest.add_item(pos, item)
+    -- Uncomment the following block if you want fishes to drop when full
+    -- Not recommended especially if high item_entity_ttl server setting.
+    --[[
+    else
+      minetest.add_item(pos, item)
+      ]]
     end
   end
 })
