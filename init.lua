@@ -264,8 +264,8 @@ end
 minetest.register_abm({
   label = "Run fish trap",
   nodenames = {"mcl_fish_traps:fishing_trap_water"},
-  interval = 45,
-  chance = 1,
+  interval = 30,
+  chance = 2,
   action = function(pos,value)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
@@ -278,8 +278,10 @@ minetest.register_abm({
     -- I suppose there's a cleaner solution but for now it works.
     -- Also we can't use enchanting (yet?) to boost loot quality,
     --  but this is a ever-running machine wich is already a boost.
-    math.randomseed(os.time())
-    local r = math.random(1, 1000)
+    --local pr = PseudoRandom(os.time())
+    --math.randomseed(os.time())
+    --local r = math.random(1, 1000)
+    local r = pr:next(1, 1000)
     --local r = pr:next(1, 100)
     if r > 980 then
       -- Treasure
