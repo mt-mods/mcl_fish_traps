@@ -105,7 +105,7 @@ local gui = function(pos, node, clicker, itemstack, pointed_thing)
   )
 end
 
--- Register Fish Trap Nodes
+-- Define Fish Trap Nodes
 trap = {
   description = S("Fishing Trap"),
   _tt_help = S("Used to automatically fish."),
@@ -151,7 +151,6 @@ trap = {
 }
 
 local trap_w = table.copy(trap)
---local trap_rw = table.copy(trap)
 
 -- Textures
 trap.tiles = {
@@ -172,18 +171,20 @@ trap_w.tiles = {
 }
 trap_w.groups.not_in_creative_inventory = 1
 
+-- Nodes Registration
 minetest.register_node("mcl_fish_traps:fishing_trap", trap)
 minetest.register_node("mcl_fish_traps:fishing_trap_water", trap_w)
 
 -- Register Fish Trap Crafting Recipe
-minetest.register_craft({
-  output = "mcl_fish_traps:fishing_trap",
   -- Recipe might be changed sooner or later, I know it's kinda awkward.
   -- Let's try to require at least some time fishing?
+local panes = game_id == "mineclone2" and "xpanes:bar_flat" or "mcl_panes:bar_flat"
+minetest.register_craft({
+  output = "mcl_fish_traps:fishing_trap",
   recipe = {
-      { "mcl_panes:bar_flat", "mcl_mobitems:slimeball", "mcl_panes:bar_flat" },
+      { panes, "mcl_mobitems:slimeball", panes },
       { "mcl_fishing:fishing_rod", "mcl_core:cobweb", "mcl_mobitems:nautilus_shell" },
-      { "mcl_panes:bar_flat", "mcl_nether:nether_wart_item", "mcl_panes:bar_flat" },
+      { panes, "mcl_nether:nether_wart_item", panes },
   }
 })
 
@@ -212,8 +213,11 @@ minetest.register_abm({
   end
 })
 
--- Store loots, unfortunately updating mcl2 loots will be tedious atm.
+-- Store loot - MCL2 and MCLA have different fishing loot.
 local loot_table = {}
+-- Unfortunately updating mcl2 loots will be tedious, as they don't
+-- define loot tables, loot is defined at fishing runtime, we have to
+-- define them.
 if game_id == "mineclone2" then
    loot_table = {
     fish = {
@@ -254,7 +258,7 @@ if game_id == "mineclone2" then
       { itemstring = "mcl_mobitems:crystalline_drop", },
     },
   }
-  -- mineclonia gives us tables instead, we are always updated.
+-- Mineclonia gives us tables instead, we are always up-to-date.
 elseif game_id == "mineclonia" then
   loot_table.fish = mcl_fishing.loot_fish
   loot_table.junk = mcl_fishing.loot_junk
@@ -273,15 +277,13 @@ minetest.register_abm({
   action = function(pos,value)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
-    local itemname
     local items
-    local itemcount = 1
     local pr = PseudoRandom(os.time() * math.random(1, 100))
     -- A little more room for randomness, 1-100 doesn't do for me.
     --   Values might change.
     -- I suppose there's a cleaner solution but for now it works.
     -- Also we can't use enchanting (yet?) to boost loot quality,
-    --  but this is a ever-running machine wich is already a boost.
+    --  but this is an everrunning machine wich is already a boost.
     local r = math.random(1, 1000)
     --local r = pr:next(1, 1000)
     --local r = pr:next(1, 100)
@@ -315,8 +317,9 @@ minetest.register_abm({
     end
     if inv:room_for_item("main", item) then
       inv:add_item("main", item)
-    -- Uncomment the following block if you want fishes to drop when full
-    -- Not recommended especially if high item_entity_ttl server setting.
+    -- Uncomment the following block if you want excess loot to drop
+    --   when the trap is full.
+    -- Not recommended especially with high item_entity_ttl server setting.
     --[[
     else
       minetest.add_item(pos, item)
