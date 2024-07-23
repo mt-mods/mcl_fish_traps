@@ -1,0 +1,9 @@
+# Easy recipe
+mcl_fish_traps_easy_recipe (Easy recipe) bool false
+
+# Traps spit out loot when full, mind item_entity_ttl on servers
+mcl_fish_traps_drop_when_full (Drop loot when trap is full) bool false
+
+# How often the traps run (mind a trap has 50% chance to get loot
+# every time it runs)
+mcl_fish_traps_wait (Run traps this often, in seconds) int 30 1 600
