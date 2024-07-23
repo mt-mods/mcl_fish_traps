@@ -20,9 +20,6 @@ local S = minetest.get_translator(minetest.get_current_modname())
 local C = minetest.colorize
 local F = minetest.formspec_escape
 
-local drop_full = minetest.settings:get("mcl_fish_traps_drop_when_full") or false
-local easy_recipe = minetest.settings:get("mcl_fish_traps_easy_recipe") or false
-
 -- Inventory Init
 -- Code from mcl_util
 local function drop_item_stack(pos, stack)
@@ -192,9 +189,9 @@ else
   -- Let's try to require at least some time fishing?
   local panes = game.id == "mineclone2" and "xpanes:bar_flat" or "mcl_panes:bar_flat"
   trap_recipe = {
-        { panes, "mcl_mobitems:slimeball", panes },
-        { "mcl_fishing:fishing_rod", "mcl_core:cobweb", "mcl_mobitems:nautilus_shell" },
-        { panes, "mcl_nether:nether_wart_item", panes },
+    { panes, "mcl_mobitems:slimeball", panes },
+    { "mcl_fishing:fishing_rod", "mcl_core:cobweb", "mcl_mobitems:nautilus_shell" },
+    { panes, "mcl_nether:nether_wart_item", panes },
   }
 end
 minetest.register_craft({
