@@ -2,23 +2,26 @@
 --|| Fishing Trap ||
 --||||||||||||||||||
 
-local game_id
-if minetest.get_game_info().id == "mineclone2" then
-  game_id = "mineclone2"
-elseif minetest.get_game_info().id == "mineclonia" then
-  game_id = "mineclonia"
-else
-  game_id = "UNSUPPORTED"
+local N = function() --TODO
+  return "[MCL Fish Traps]"
 end
-minetest.log("action", "[MCL Fish Traps]: Initializing on game [" .. game_id .. "]")
-if game_id == "UNSUPPORTED" then
-  return --comment to try your luck, or debug.
-  minetest.log("warning", "[MCL Fish Traps]: Running on an unknown game, expect dragons.")
+
+-- Do we need this when min_minetest_version is specified?
+local game = minetest.get_game_info() or nil
+
+if game == nil then
+  minetest.log("warning", N() .. ": Disabled -- minetest >= 5.7.0 required, update to use this mod.")
+  return
 end
+
+minetest.log("action", N() .. ": Initializing on " .. game.title)
 
 local S = minetest.get_translator(minetest.get_current_modname())
 local C = minetest.colorize
 local F = minetest.formspec_escape
+
+local drop_full = minetest.settings:get("mcl_fish_traps_drop_when_full") or false
+local easy_recipe = minetest.settings:get("mcl_fish_traps_easy_recipe") or false
 
 -- Inventory Init
 -- Code from mcl_util
@@ -160,7 +163,7 @@ trap.tiles = {
 }
 
 water_tex = "default_water_source_animated.png^[verticalframe:16:0"
-if game_id == "mineclone2" then
+if game.id == "mineclone2" then
   water_tex = "mcl_core_water_source_animation.png^[verticalframe:16:0"
 end
 
@@ -176,18 +179,30 @@ minetest.register_node("mcl_fish_traps:fishing_trap", trap)
 minetest.register_node("mcl_fish_traps:fishing_trap_water", trap_w)
 
 -- Register Fish Trap Crafting Recipe
+local easy_recipe = minetest.settings:get("mcl_fish_traps_easy_recipe") or false
+local trap_recipe
+if easy_recipe then
+  trap_recipe = {
+    { "mcl_mobitems:string", "mcl_core:stick", "mcl_mobitems:string" },
+    { "mcl_core:stick", "mcl_fishing:fishing_rod", "mcl_core:stick" },
+    { "mcl_mobitems:string", "mcl_core:stick", "mcl_mobitems:string" },
+  }
+else
   -- Recipe might be changed sooner or later, I know it's kinda awkward.
   -- Let's try to require at least some time fishing?
-local panes = game_id == "mineclone2" and "xpanes:bar_flat" or "mcl_panes:bar_flat"
+  local panes = game.id == "mineclone2" and "xpanes:bar_flat" or "mcl_panes:bar_flat"
+  trap_recipe = {
+        { panes, "mcl_mobitems:slimeball", panes },
+        { "mcl_fishing:fishing_rod", "mcl_core:cobweb", "mcl_mobitems:nautilus_shell" },
+        { panes, "mcl_nether:nether_wart_item", panes },
+  }
+end
 minetest.register_craft({
   output = "mcl_fish_traps:fishing_trap",
-  recipe = {
-      { panes, "mcl_mobitems:slimeball", panes },
-      { "mcl_fishing:fishing_rod", "mcl_core:cobweb", "mcl_mobitems:nautilus_shell" },
-      { panes, "mcl_nether:nether_wart_item", panes },
-  }
+  recipe = trap_recipe,
 })
 
+-- FIXME: Traps remain "wet" when blocks are placed on their faces.
 -- Register Water Logging Fish Trap ABM
 local adjacents = {
   vector.new(1,0,0),
@@ -215,10 +230,8 @@ minetest.register_abm({
 
 -- Store loot - MCL2 and MCLA have different fishing loot.
 local loot_table = {}
--- Unfortunately updating mcl2 loots will be tedious, as they don't
--- define loot tables, loot is defined at fishing runtime, we have to
--- define them.
-if game_id == "mineclone2" then
+-- In mcl2 loot is defined at fishing runtime, we have to define it.
+if game.id == "mineclone2" then
    loot_table = {
     fish = {
       { itemstring = "mcl_fishing:fish_raw", weight = 60 },
@@ -259,20 +272,33 @@ if game_id == "mineclone2" then
     },
   }
 -- Mineclonia gives us tables instead, we are always up-to-date.
-elseif game_id == "mineclonia" then
+elseif game.id == "mineclonia" then
   loot_table.fish = mcl_fishing.loot_fish
   loot_table.junk = mcl_fishing.loot_junk
   loot_table.treasure = mcl_fishing.loot_treasure
 else
   loot_table = {} --placeholder
+  minetest.log("warning", "[MCL Fish Traps]: Loot table empty due to unrecognized game: " .. game.title)
 end
 
-math.randomseed(os.time())
+-- Add some clogging shtuff, ideally customize a clogging item as
+-- sediment and/or implement traps mantainance.
+loot_table.clog = {
+  { itemstring = "mcl_core:sand", weight = 8 },
+  { itemstring = "mcl_core:dirt", weight = 4 },
+  { itemstring = "mcl_core:gravel", weight = 4 },
+  { itemstring = "mcl_ocean:kelp", weight = 2 },
+}
+
 -- Register Fishing ABM
+local drop_full = minetest.settings:get("mcl_fish_traps_drop_when_full") or false
+local trap_wait = minetest.settings:get("mcl_fish_traps_wait") or 30
+math.randomseed(os.time())
+
 minetest.register_abm({
   label = "Run fish trap",
   nodenames = {"mcl_fish_traps:fishing_trap_water"},
-  interval = 30,
+  interval = trap_wait,
   chance = 2,
   action = function(pos,value)
     local meta = minetest.get_meta(pos)
@@ -287,17 +313,24 @@ minetest.register_abm({
     local r = math.random(1, 1000)
     --local r = pr:next(1, 1000)
     --local r = pr:next(1, 100)
-    if r > 980 then
+    if r > 970 then
       -- Treasure
       items = mcl_loot.get_loot({
         items = loot_table.treasure,
         stacks_min = 1,
         stacks_max = 1,
         }, pr)
-    elseif r < 110 then
+    elseif r < 192 and r > 90 then
       -- Junk
       items = mcl_loot.get_loot({
         items = loot_table.junk,
+        stacks_min = 1,
+        stacks_max = 1,
+      }, pr)
+    elseif r <= 90 then
+      -- Clog
+      items = mcl_loot.get_loot({
+        items = loot_table.clog,
         stacks_min = 1,
         stacks_max = 1,
         }, pr)
@@ -317,13 +350,8 @@ minetest.register_abm({
     end
     if inv:room_for_item("main", item) then
       inv:add_item("main", item)
-    -- Uncomment the following block if you want excess loot to drop
-    --   when the trap is full.
-    -- Not recommended especially with high item_entity_ttl server setting.
-    --[[
-    else
+    elseif drop_full then
       minetest.add_item(pos, item)
-      ]]
     end
   end
 })
