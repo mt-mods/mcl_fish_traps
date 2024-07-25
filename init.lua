@@ -213,7 +213,7 @@ local adjacents = {
   vector.new(0,0,1),
   vector.new(0,0,-1),
 }
-local wet_time = minetest.settings:get("mcl_fish_trap_wet_time") or 20
+local wet_time = minetest.settings:get("mcl_fish_traps_wet_time") or 20
 minetest.register_abm({
   label = "Waterlog fish trap",
   nodenames = {"mcl_fish_traps:fishing_trap"},
