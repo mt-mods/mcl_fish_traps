@@ -2,6 +2,7 @@
 Kinda a rewrite, kinda an improvement, kinda what I needed.  
 Adapted to be less op and easier on servers, I hope.  
 Prone to more changes as I figure stuff out.  
+Minetest >= 5.7.0 is required.
   
 Don't bug mt-mods for issues with this fork.  
 

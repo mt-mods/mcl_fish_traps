@@ -9,11 +9,11 @@ end
 local game = minetest.get_game_info() or nil
 -- Do we need this when min_minetest_version is specified?
 if game == nil then
-  minetest.log("warning", N() .. ": Disabled -- minetest >= 5.7.0 required, update to use this mod.")
+  minetest.log(N() .. ": Disabled -- minetest >= 5.7.0 required, update to use this mod.")
   return
 end
 
-minetest.log("action", N() .. ": Initializing on " .. (game.title or "unknown"))
+minetest.log("action", N() .. ": Initializing on " .. (game.title or "unknown game"))
 
 local S = minetest.get_translator(minetest.get_current_modname())
 local C = minetest.colorize
@@ -213,12 +213,12 @@ local adjacents = {
   vector.new(0,0,1),
   vector.new(0,0,-1),
 }
-
+local wet_time = minetest.settings:get("mcl_fish_trap_wet_time") or 20
 minetest.register_abm({
   label = "Waterlog fish trap",
   nodenames = {"mcl_fish_traps:fishing_trap"},
   neighbors = {"group:water"},
-  interval = 6,
+  interval = wet_time,
   chance = 1,
   action = function(pos,value)
     for _,v in pairs(adjacents) do
@@ -281,20 +281,34 @@ elseif game.id == "mineclonia" then
   loot_table.treasure = mcl_fishing.loot_treasure
 else
   loot_table = {} --placeholder
-  minetest.log("warning", "[MCL Fish Traps]: Loot table empty due to unrecognized game: " .. (game.title or "unknown"))
+  minetest.log("warning", N()
+                .. ": Loot table empty due to unrecognized game: "
+                .. (game.title or "unknown"))
 end
 
 -- Register Fishing ABM
 local drop_full = minetest.settings:get("mcl_fish_traps_drop_when_full") or false
 local trap_wait = minetest.settings:get("mcl_fish_traps_wait") or 30
+local run_chance = minetest.settings:get("mcl_fish_traps_chance") or 2
 --math.randomseed(os.time())
 
 minetest.register_abm({
   label = "Run fish trap",
   nodenames = {"mcl_fish_traps:fishing_trap_water"},
   interval = trap_wait,
-  chance = 2,
+  chance = run_chance,
   action = function(pos,value)
+    local notwater = 0
+    for _,v in pairs(adjacents) do
+      local n = minetest.get_node(vector.add(pos,v)).name
+      if not (minetest.get_item_group(n,"water") > 0) then
+        notwater = notwater + 1
+        if notwater > 3 then
+          minetest.swap_node(pos,{name="mcl_fish_traps:fishing_trap"})
+          return
+        end
+      end
+    end
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     local items
