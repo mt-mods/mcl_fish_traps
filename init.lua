@@ -106,7 +106,7 @@ local gui = function(pos, node, clicker, itemstack, pointed_thing)
 end
 
 -- Define Fish Trap Nodes
-trap = {
+local trap = {
   description = S("Fishing Trap"),
   _tt_help = S("Used to automatically fish."),
   _doc_items_longdesc = S("Used to automatically fish when placed in water."),
@@ -159,9 +159,11 @@ trap.tiles = {
   "mcl_fish_traps_trap.png", "mcl_fish_traps_trap.png"
 }
 
-water_tex = "default_water_source_animated.png^[verticalframe:16:0"
+local water_tex
 if game.id == "mineclone2" then
   water_tex = "mcl_core_water_source_animation.png^[verticalframe:16:0"
+else
+  water_tex = "default_water_source_animated.png^[verticalframe:16:0"
 end
 
 trap_w.tiles = {
@@ -290,7 +292,7 @@ loot_table.clog = {
 -- Register Fishing ABM
 local drop_full = minetest.settings:get("mcl_fish_traps_drop_when_full") or false
 local trap_wait = minetest.settings:get("mcl_fish_traps_wait") or 30
-math.randomseed(os.time())
+--math.randomseed(os.time())
 
 minetest.register_abm({
   label = "Run fish trap",
