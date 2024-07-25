@@ -280,15 +280,6 @@ else
   minetest.log("warning", "[MCL Fish Traps]: Loot table empty due to unrecognized game: " .. game.title)
 end
 
--- Add some clogging shtuff, ideally customize a clogging item as
--- sediment and/or implement traps mantainance.
-loot_table.clog = {
-  { itemstring = "mcl_core:sand", weight = 8 },
-  { itemstring = "mcl_core:dirt", weight = 4 },
-  { itemstring = "mcl_core:gravel", weight = 4 },
-  { itemstring = "mcl_ocean:kelp", weight = 2 },
-}
-
 -- Register Fishing ABM
 local drop_full = minetest.settings:get("mcl_fish_traps_drop_when_full") or false
 local trap_wait = minetest.settings:get("mcl_fish_traps_wait") or 30
@@ -319,20 +310,13 @@ minetest.register_abm({
         stacks_min = 1,
         stacks_max = 1,
         }, pr)
-    elseif r < 192 and r > 90 then
+    elseif r < 101 then
       -- Junk
       items = mcl_loot.get_loot({
         items = loot_table.junk,
         stacks_min = 1,
         stacks_max = 1,
       }, pr)
-    elseif r <= 90 then
-      -- Clog
-      items = mcl_loot.get_loot({
-        items = loot_table.clog,
-        stacks_min = 1,
-        stacks_max = 1,
-        }, pr)
     else
       -- Fish
       items = mcl_loot.get_loot({
