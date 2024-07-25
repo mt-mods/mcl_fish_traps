@@ -6,15 +6,14 @@ local N = function() --TODO
   return "[MCL Fish Traps]"
 end
 
--- Do we need this when min_minetest_version is specified?
 local game = minetest.get_game_info() or nil
-
+-- Do we need this when min_minetest_version is specified?
 if game == nil then
   minetest.log("warning", N() .. ": Disabled -- minetest >= 5.7.0 required, update to use this mod.")
   return
 end
 
-minetest.log("action", N() .. ": Initializing on " .. game.title)
+minetest.log("action", N() .. ": Initializing on " .. (game.title or "unknown"))
 
 local S = minetest.get_translator(minetest.get_current_modname())
 local C = minetest.colorize
@@ -148,6 +147,7 @@ local trap = {
   after_dig_node = drop_stack,
   on_blast = on_blast,
   drop = "mcl_fish_traps:fishing_trap",
+  sounds = mcl_sounds.node_sound_wood_defaults()
 }
 
 local trap_w = table.copy(trap)
@@ -160,9 +160,11 @@ trap.tiles = {
 }
 
 local water_tex
-if game.id == "mineclone2" then
+if game.id == "mineclone2" or game.id == "VoxeLibre" then
   water_tex = "mcl_core_water_source_animation.png^[verticalframe:16:0"
-else
+elseif game.id == "mineclonia" then
+  water_tex = "default_water_source_animated.png^[verticalframe:16:0"
+else --placeholder
   water_tex = "default_water_source_animated.png^[verticalframe:16:0"
 end
 
@@ -171,6 +173,7 @@ trap_w.tiles = {
   "("..water_tex..")^mcl_fish_traps_trap.png",
   "("..water_tex..")^mcl_fish_traps_trap.png",
 }
+
 trap_w.groups.not_in_creative_inventory = 1
 
 -- Nodes Registration
@@ -189,7 +192,8 @@ if easy_recipe then
 else
   -- Recipe might be changed sooner or later, I know it's kinda awkward.
   -- Let's try to require at least some time fishing?
-  local panes = game.id == "mineclone2" and "xpanes:bar_flat" or "mcl_panes:bar_flat"
+  local panes = (game.id == "mineclone2" or game.id == "VoxeLibre")
+                and "xpanes:bar_flat" or "mcl_panes:bar_flat"
   trap_recipe = {
     { panes, "mcl_mobitems:slimeball", panes },
     { "mcl_fishing:fishing_rod", "mcl_core:cobweb", "mcl_mobitems:nautilus_shell" },
@@ -230,7 +234,7 @@ minetest.register_abm({
 -- Store loot - MCL2 and MCLA have different fishing loot.
 local loot_table = {}
 -- In mcl2 loot is defined at fishing runtime, we have to define it.
-if game.id == "mineclone2" then
+if game.id == "mineclone2" or game.id == "VoxeLibre" then
    loot_table = {
     fish = {
       { itemstring = "mcl_fishing:fish_raw", weight = 60 },
@@ -277,7 +281,7 @@ elseif game.id == "mineclonia" then
   loot_table.treasure = mcl_fishing.loot_treasure
 else
   loot_table = {} --placeholder
-  minetest.log("warning", "[MCL Fish Traps]: Loot table empty due to unrecognized game: " .. game.title)
+  minetest.log("warning", "[MCL Fish Traps]: Loot table empty due to unrecognized game: " .. (game.title or "unknown"))
 end
 
 -- Register Fishing ABM
