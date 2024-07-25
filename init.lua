@@ -205,7 +205,6 @@ minetest.register_craft({
   recipe = trap_recipe,
 })
 
--- FIXME: Traps remain "wet" when blocks are placed on their faces.
 -- Register Water Logging Fish Trap ABM
 local adjacents = {
   vector.new(1,0,0),
@@ -298,15 +297,14 @@ minetest.register_abm({
   interval = trap_wait,
   chance = run_chance,
   action = function(pos,value)
-    local notwater = 0
-    for _,v in pairs(adjacents) do
+    --local notwater = 0
+    for i,v in pairs(adjacents) do
       local n = minetest.get_node(vector.add(pos,v)).name
-      if not (minetest.get_item_group(n,"water") > 0) then
-        notwater = notwater + 1
-        if notwater > 3 then
-          minetest.swap_node(pos,{name="mcl_fish_traps:fishing_trap"})
-          return
-        end
+      if minetest.get_item_group(n,"water") > 0 then
+        break
+      elseif i > 3 then
+        minetest.swap_node(pos,{name="mcl_fish_traps:fishing_trap"})
+        return
       end
     end
     local meta = minetest.get_meta(pos)
@@ -327,7 +325,7 @@ minetest.register_abm({
         items = loot_table.treasure,
         stacks_min = 1,
         stacks_max = 1,
-        }, pr)
+      }, pr)
     elseif r < 101 then
       -- Junk
       items = mcl_loot.get_loot({
@@ -341,7 +339,7 @@ minetest.register_abm({
         items = loot_table.fish,
         stacks_min = 1,
         stacks_max = 1,
-        }, pr)
+      }, pr)
     end
     local item
     if #items >= 1 then

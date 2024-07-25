@@ -6,11 +6,16 @@ mcl_fish_traps_easy_recipe (Easy recipe) bool false
 mcl_fish_traps_drop_when_full (Drop loot when trap is full) bool false
 
 # How much time to wait before a trap wettens (becomes functional)
+# Decreasing this can affect performance
 mcl_fish_traps_wet_time (Wait time before dry traps check for water) int 20 1 600
 
 # How often the traps run and try to catch something
 # (This includes how often traps check for adjacent water at the moment)
+# Decreasing this can affect performance
 mcl_fish_traps_wait (Run traps this often, in seconds) int 30 1 600
 
-# Chance traps will catch something
-mcl_fish_traps_chance (1 in <this chance> a trap will catch loot) int 2 1 600
+# Chance traps will catch something:
+# 2 = 50%
+# 3 = 33%
+# and so on
+mcl_fish_traps_chance (1 in <this number> a trap will catch loot) int 2 1 600
