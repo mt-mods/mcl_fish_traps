@@ -109,6 +109,7 @@ local trap = {
   description = S("Fishing Trap"),
   _tt_help = S("Used to automatically fish."),
   _doc_items_longdesc = S("Used to automatically fish when placed in water."),
+  --_doc_items_longdesc = S("A fish trap can automatically collect fishing loot when placed in water.\nAs long as any of its side faces is touching water, it will slowly do its job.\nIts appaerance changes to a \"wet\" state to indicate water is flowing and it is working."),
   use_texture_alpha = "clip",
   is_ground_content = false,
   paramtype2 = "facedir",
@@ -297,7 +298,6 @@ minetest.register_abm({
   interval = trap_wait,
   chance = run_chance,
   action = function(pos,value)
-    --local notwater = 0
     for i,v in pairs(adjacents) do
       local n = minetest.get_node(vector.add(pos,v)).name
       if minetest.get_item_group(n,"water") > 0 then
