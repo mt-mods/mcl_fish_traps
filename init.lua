@@ -2,9 +2,9 @@
 --|| Fishing Trap ||
 --||||||||||||||||||
 
-local game = core.get_game_info() or nil
-if game == nil then
-	core.log(core.get_current_modname() .. ": Disabled -- minetest >= 5.7.0 required, update to use this mod.")
+local game = core.get_game_info() or false
+if not core.features.abm_without_neighbors then
+	core.log(core.get_current_modname() .. ": Disabled -- Luanti/Minetest >= 5.10 required, update to use this mod.")
 	return
 end
 
