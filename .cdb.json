@@ -1,0 +1,13 @@
+{
+  "$schema": "https://content.luanti.org/api/cdb_schema/",
+  "title": "Fish Traps",
+  "tags": ["tools", "technology"],
+  "type": "MOD",
+  "dev_state": "MAINTENANCE_ONLY",
+  "ai_disclosure": "NONE",
+  "license": "GPL-3.0-or-later",
+  "repo": "https://github.com/mt-mods/mcl_fish_traps",
+  "issue_tracker": "https://github.com/mt-mods/mcl_fish_traps/issues/new/choose/",
+  "translation_url": "https://translate.luanti.ch/engage/mt-mods/",
+  "short_description": "Adds fishing traps"
+}
