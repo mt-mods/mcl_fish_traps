@@ -1,3 +1,0 @@
-Fishing Trap=
-Used to automatically fish.=
-Used to automatically fish when placed in water.=

@@ -1,8 +1,30 @@
-# Fishing Traps for MineClone 2
-Adds fishing traps to MineClone 2. Just place in the water, and it will automatically and slowly fish for you. Has the same loot table as the fishing rod. The trap must be surrounded horizontally by (river) water source blocks.
+# Fishing Traps
+
+[![ContentDB](https://content.luanti.org/packages/mt-mods/mcl_fish_traps/shields/downloads/)](https://content.luanti.org/packages/mt-mods/mcl_fish_traps/)
+[![Translation status](https://translate.luanti.ch/widget/mt-mods/mcl_fish_traps/svg-badge.svg?capitalize=1)](https://translate.luanti.ch/engage/mt-mods/)
+[![Luacheck](https://github.com/mt-mods/mcl_fish_traps/workflows/luacheck/badge.svg)](https://github.com/mt-mods/mcl_fish_traps/actions)
+
+Adds fishing traps, just place in river water.
+It will automatically and slowly fish for you.
+Has the same loot table as the fishing rod.
+The trap must be surrounded horizontally by (river) water source blocks.
+
+## Dependencies
+
+- Luanti/Minetest v5.10+
+- `mcl_util`
+- `mcl_loot`
+- `mcl_fishing`
+
+### Optional
+
+- `mcl_enchanting`
 
 ## Compatibility
-This mod is relatively incompatible with older versions of MineClone2. It is absolutely incompatible with MineClone5.
+
+- VoxeLibre
+- Mineclonia
 
 ## Suggestions
-Have a suggestion or a bug? Create an issue on the [bug tracker](https://github.com/mt-mods/mcl_fish_traps/issues).
+
+Have a suggestion or a bug? Create an issue on the [bug tracker](https://github.com/mt-mods/mcl_fish_traps/issues) or submit a [pull request](https://github.com/mt-mods/mcl_fish_traps/pulls).
